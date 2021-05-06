@@ -76,7 +76,7 @@ dotenv.config({path: "../.env"});
     console.log("===========================\n")
 
 
-    const selectedListIndex = 1;
+    const selectedListIndex = 2;
     console.log(`${selectedListIndex}번 플레이리스트에 대해 작업 시작!\n`)
 
     await page.click(`#pageList > table > tbody > tr:nth-child(${selectedListIndex}) > td:nth-child(2) > div > div > dl > dt > a`);
@@ -85,7 +85,8 @@ dotenv.config({path: "../.env"});
     
     const songCountSelector = '#songList > div > h3 > span'
     const songCount = await page.$eval(songCountSelector, data => Number(data.textContent.replace(/[^0-9]/g, "")))
-    const playlistPageURL = `https://www.melon.com/mymusic/playlist/mymusicplaylistview_inform.htm?plylstSeq=492100349#params%5BplylstSeq%5D=492100349&po=pageObj&startIndex=`
+    const playlistID = Number(page.url().replace("https://www.melon.com/mymusic/playlist/mymusicplaylistview_inform.htm?plylstSeq=",""));
+    const playlistPageURL = `https://www.melon.com/mymusic/playlist/mymusicplaylistview_inform.htm?plylstSeq=${playlistID}#params%5BplylstSeq%5D=${playlistID}&po=pageObj&startIndex=`
 
     let nowSongIndex = 1;
     let totalSongList = [];
@@ -100,7 +101,7 @@ dotenv.config({path: "../.env"});
         for(let nowPageSongIndex = 1;nowPageSongIndex <= 50; nowPageSongIndex++) {
             if(nowSongIndex > songCount) break;
             
-            const songTitleSelector = `#frm > div > table > tbody > tr:nth-child(${nowPageSongIndex}) > td:nth-child(3) > div > div > a.fc_gray`
+            const songTitleSelector = `#frm > div > table > tbody > tr:nth-child(${nowPageSongIndex}) > td:nth-child(3) > div > div > a.btn.btn_icon_detail`
             const songArtistSelector = `#frm > div > table > tbody > tr:nth-child(${nowPageSongIndex}) > td:nth-child(4) > div`
         
             const songTitle = await page.$eval(songTitleSelector, data => data.textContent);
@@ -119,7 +120,15 @@ dotenv.config({path: "../.env"});
     }
 
     const targetPlaylistTitle = songLists[selectedListIndex-1].spec.split('\n')[0];
-    fs.writeFileSync(`./myplaylist_${targetPlaylistTitle}.json`, JSON.stringify(totalSongList));
+
+
+    const returnObj = {
+        playlistName : targetPlaylistTitle,
+        playlistItems: totalSongList
+    }
+
+
+    fs.writeFileSync(`./myplaylist_${targetPlaylistTitle}.json`, JSON.stringify(returnObj));
 
     console.log("(Ctrl + C로 종료하기)");
 
