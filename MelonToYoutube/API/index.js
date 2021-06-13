@@ -10,29 +10,32 @@ dotenv.config({path: "../.env"});
 
     const user_id = process.env.USER_ID;
     const user_pw = process.env.USER_PW;
-    const melonLoginURL = "https://member.melon.com/muid/web/login/login_inform.htm"
+    const melonLoginURL = "https://member.melon.com/muid/web/login/login_informM.htm"
 
     await page.goto(melonLoginURL);
 
-    console.log("멜론 로그인 페이지로 이동중...")
-
-    await page.click('#conts_section > div > div > div:nth-child(3) > button');
-
     console.log("멜론 계정으로 로그인 페이지로 이동중...")
+
+    await page.waitForTimeout(100);
 
     await page.evaluate((id, pw) => {
         document.querySelector('#id').value = id;
         document.querySelector('#pwd').value = pw;
     }, user_id, user_pw);
     
-    await page.click('#btnLogin');
+    
+    console.log("로그인 시도 중...");
+    
+    await page.waitForTimeout(100);
+    await page.click('#btnLogin > span');
 
-    console.log("로그인 시도 중...")
-
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(100);
+    await page.screenshot({ path : 'now.png', fullPage : true })
 
     if(page.url() !== "https://www.melon.com/") {
         console.log("로그인 실패!")
+
+        await browser.close();
         return;
     }
 
@@ -133,5 +136,6 @@ dotenv.config({path: "../.env"});
     console.log("(Ctrl + C로 종료하기)");
 
     await browser.close();
+    return;
 })();
 
