@@ -5,7 +5,7 @@
   "main": "./src/submissionIDcroll.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./src/submissionIDcroll.js"
+    "start": "nodemon ./src/submissionIDcroll.js"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +15,7 @@
     "cheerio": "*",
     "dotenv": "^8.2.0",
     "fs": "*",
+    "nodemon": "^2.0.15",
     "puppeteer": "^9.1.0",
     "puppeteer-core": "^9.1.0"
   }
